@@ -43,10 +43,36 @@
                 (<= (:blue % 0) (:blue rules)))
           match))
 
-(valid-match? input-rule [{:red 100} {:blue 2} {:green 3}])
-
 (defn- valid-matches
   [rules matches]
   (filter #(valid-match? rules (:results %)) matches))
 
-(reduce + (map :game-number (valid-matches input-rule (map game-result (string/split-lines input)))))
+(defn part-1
+  []
+  (->> input
+       string/split-lines
+       (map game-result)
+       (valid-matches input-rule)
+       (map :game-number)
+       (reduce +)))
+
+(defn minimum-viable-cubes
+  [{:keys [results]}]
+  (reduce (partial merge-with max)
+          {:red   0
+           :green 0
+           :blue  0}
+          results))
+
+(defn cube-set-power
+  [{:keys [red green blue]}]
+  (* red green blue))
+
+(defn part-2
+  []
+  (->> input
+       string/split-lines
+       (map game-result)
+       (map minimum-viable-cubes)
+       (map cube-set-power)
+       (reduce +)))
